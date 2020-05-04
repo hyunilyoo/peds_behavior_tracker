@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 import sys
 import glob
+
 from utils import label_map_util
 from utils import visualization_utils as vis_util
 
