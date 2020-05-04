@@ -1,33 +1,13 @@
-######## Image Object Detection Using Tensorflow-trained Classifier #########
-#
-# Author: Evan Juras
-# Date: 1/15/18
-# Description: 
-# This program uses a TensorFlow-trained neural network to perform object detection.
-# It loads the classifier and uses it to perform object detection on an image.
-# It draws boxes, scores, and labels around the objects of interest in the image.
-
-## Some of the code is copied from Google's example at
-## https://github.com/tensorflow/models/blob/master/research/object_detection/object_detection_tutorial.ipynb
-
-## and some is copied from Dat Tran's example at
-## https://github.com/datitran/object_detector_app/blob/master/object_detection_app.py
-
-## but I changed it to make it more understandable to me.
-
-# Import packages
 import os
 import cv2
 import numpy as np
 import tensorflow as tf
 import sys
+from utils import label_map_util
+from utils import visualization_utils as vis_util
 
 # This is needed since the notebook is stored in the object_detection folder.
 sys.path.append("..")
-
-# Import utilites
-from utils import label_map_util
-from utils import visualization_utils as vis_util
 
 # Name of the directory containing the object detection module we're using
 MODEL_NAME = 'inference_graph'
@@ -47,7 +27,7 @@ PATH_TO_LABELS = os.path.join(CWD_PATH,'training','labelmap.pbtxt')
 PATH_TO_IMAGE = os.path.join(CWD_PATH,IMAGE_NAME)
 
 # Number of classes the object detector can identify
-NUM_CLASSES = 6
+NUM_CLASSES = 4
 
 # Load the label map.
 # Label maps map indices to category names, so that when our convolution
@@ -90,8 +70,7 @@ num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 # expand image dimensions to have shape: [1, None, None, 3]
 # i.e. a single-column array, where each item in the column has the pixel RGB value
 image = cv2.imread(PATH_TO_IMAGE)
-image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-image_expanded = np.expand_dims(image_rgb, axis=0)
+image_expanded = np.expand_dims(image, axis=0)
 
 # Perform the actual detection by running the model with the image as input
 (boxes, scores, classes, num) = sess.run(
@@ -111,7 +90,7 @@ vis_util.visualize_boxes_and_labels_on_image_array(
     min_score_thresh=0.60)
 
 # All the results have been drawn on image. Now display the image.
-cv2.imshow('Object detector', image)
+cv2.imwrite('Object detector.png', image)
 
 # Press any key to close the image
 cv2.waitKey(0)

@@ -1,34 +1,15 @@
-######## Video Object Detection Using Tensorflow-trained Classifier #########
-#
-# Author: Evan Juras
-# Date: 1/16/18
-# Description: 
-# This program uses a TensorFlow-trained classifier to perform object detection.
-# It loads the classifier and uses it to perform object detection on a video.
-# It draws boxes, scores, and labels around the objects of interest in each
-# frame of the video.
-
-## Some of the code is copied from Google's example at
-## https://github.com/tensorflow/models/blob/master/research/object_detection/object_detection_tutorial.ipynb
-
-## and some is copied from Dat Tran's example at
-## https://github.com/datitran/object_detector_app/blob/master/object_detection_app.py
-
-## but I changed it to make it more understandable to me.
-
-# Import packages
 import os
 import cv2
 import numpy as np
 import tensorflow as tf
 import sys
+import glob
+from utils import label_map_util
+from utils import visualization_utils as vis_util
+
 
 # This is needed since the notebook is stored in the object_detection folder.
 sys.path.append("..")
-
-# Import utilites
-from utils import label_map_util
-from utils import visualization_utils as vis_util
 
 # Name of the directory containing the object detection module we're using
 MODEL_NAME = 'inference_graph'
@@ -48,7 +29,7 @@ PATH_TO_LABELS = os.path.join(CWD_PATH,'training','labelmap.pbtxt')
 PATH_TO_VIDEO = os.path.join(CWD_PATH,VIDEO_NAME)
 
 # Number of classes the object detector can identify
-NUM_CLASSES = 6
+NUM_CLASSES = 4
 
 # Load the label map.
 # Label maps map indices to category names, so that when our convolution
@@ -89,38 +70,40 @@ num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 
 # Open video file
 video = cv2.VideoCapture(PATH_TO_VIDEO)
+count = 0
 
 while(video.isOpened()):
 
     # Acquire frame and expand frame dimensions to have shape: [1, None, None, 3]
     # i.e. a single-column array, where each item in the column has the pixel RGB value
     ret, frame = video.read()
-    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    frame_expanded = np.expand_dims(frame_rgb, axis=0)
+    if ret == True:
+        frame_expanded = np.expand_dims(frame, axis=0)
 
-    # Perform the actual detection by running the model with the image as input
-    (boxes, scores, classes, num) = sess.run(
-        [detection_boxes, detection_scores, detection_classes, num_detections],
-        feed_dict={image_tensor: frame_expanded})
+        # Perform the actual detection by running the model with the image as input
+        (boxes, scores, classes, num) = sess.run(
+            [detection_boxes, detection_scores, detection_classes, num_detections],
+            feed_dict={image_tensor: frame_expanded}
+            )
 
-    # Draw the results of the detection (aka 'visulaize the results')
-    vis_util.visualize_boxes_and_labels_on_image_array(
-        frame,
-        np.squeeze(boxes),
-        np.squeeze(classes).astype(np.int32),
-        np.squeeze(scores),
-        category_index,
-        use_normalized_coordinates=True,
-        line_thickness=8,
-        min_score_thresh=0.60)
-
-    # All the results have been drawn on the frame, so it's time to display it.
-    cv2.imshow('Object detector', frame)
-
-    # Press 'q' to quit
-    if cv2.waitKey(1) == ord('q'):
+        # Draw the results of the detection (aka 'visulaize the results')
+        vis_util.visualize_boxes_and_labels_on_image_array(
+            frame,
+            np.squeeze(boxes),
+            np.squeeze(classes).astype(np.int32),
+            np.squeeze(scores),
+            category_index,
+            use_normalized_coordinates=True,
+            line_thickness=8,
+            min_score_thresh=0.60
+            )
+            
+        cv2.imwrite('detect_video/%d.jpg' %count, frame)
+        count += 1
+    else:
         break
 
 # Clean up
 video.release()
 cv2.destroyAllWindows()
+
