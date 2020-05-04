@@ -5,10 +5,12 @@ In Autonomous driving industry, the most important thing to consider is public s
 It is important to predict the other cars' behaviors; however, predicting pedestrian behaviors might be more important to focus on because when an accident involves with predestrians, there is a high probability of that accident is being a fatal accident. If we can predict what is a pedestrian's intent on the public road, it will make easier for a self-driving car to maneuver around pedestrians.
 ## Pedestrian Behaviors
 These are defined by me. The reason behind of these is if pedestrians are not aware of a self-driving car is approaching to them, they might suddenly change a direction of travelling or even come toward a self-driving car. And this can cause a harsh brake or even an accident due to the lack of time to react for a self-driving car. On the other hand, the self-driving car has to be very sensitive and that can cause unnecessary brakes or awkward nudges without the information of pedestrians are aware of a self-driving car. Therefore, I believe knowing whether pedestrians are aware of a self-driving car or not is essential for what actions a self-driving car to execute around pedestrians.  
-***1.*** n_looking/g: A pedestrian is not looking at the vehicle and crossing the road  
-***2.*** n_looking/ng: A pedestrian is not looking at the vehicle and not crossing the road  
-***3.*** looking/g: A pedestrian is looking at the vehicle and crossing the road  
-***4.*** looking/ng: A pedestrian is looking at the vehicle and not crossing the road  
+```
+1. n_looking/g: A pedestrian is not looking at the vehicle and crossing the road  
+2. n_looking/ng: A pedestrian is not looking at the vehicle and not crossing the road  
+3. looking/g: A pedestrian is looking at the vehicle and crossing the road  
+4. looking/ng: A pedestrian is looking at the vehicle and not crossing the road  
+```
 ## Process of Training a customized dataset
 ***1.*** Get clips of drive view videos that have pedestrian in it  
 ***2.*** Cut by frames of the clips  
